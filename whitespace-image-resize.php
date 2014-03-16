@@ -3,7 +3,7 @@
 Plugin Name: Whitespace Image Resize
 Plugin URI: http://lostfocus.de
 Description: Rewrites the image urls to use TimThumb to resize and add whitespace instead of cropping
-Version: 1.1
+Version: 1.2
 Author: Dominik Schwind
 Author URI: http://lostfocus.de/
 License: GPL2
@@ -27,8 +27,14 @@ License: GPL2
 
 function whitespace_image_resize($unused ,$post_ID, $size){
     global $_wp_additional_image_sizes;
-    if(!isset($_wp_additional_image_sizes[$size])) return false;
-    extract($_wp_additional_image_sizes[$size]);
+    if(!is_array($size)){
+        if(!isset($_wp_additional_image_sizes[$size])) return false;
+        extract($_wp_additional_image_sizes[$size]);
+    } else {
+        $height = $size[1];
+        $width = $size[0];
+        $crop = true;
+    }
     $url = wp_get_attachment_url($post_ID);
     $tturl = plugins_url('timthumb.php',__file__);
     $tturl = $tturl."?src=".urlencode($url);
